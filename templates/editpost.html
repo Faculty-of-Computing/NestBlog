@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Post{% endblock %}
+
+{% block content %}
+    <h1>Edit Post</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <label>Title:</label><br>
+        <input type="text" name="title" value="{{ post.title }}" required><br><br>
+
+        <label>Current Image:</label><br>
+        {% if post.featured_image %}
+            <img src="{{ url_for('static', filename='images/' ~ post.featured_image) }}" width="200"><br>
+        {% else %}
+            <em>No image uploaded</em><br>
+        {% endif %}
+        <label>Change Featured Image:</label><br>
+        <input type="file" name="featured_image" accept="image/*"><br><br>
+
+        <label>Category:</label><br>
+        <select name="category_id">
+            <option value="">-- Select Category --</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}"
+                    {% if category.id == post.category_id %} selected {% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Mark as Draft:</label>
+        <input type="checkbox" name="draft" {% if post.draft %}checked{% endif %}><br><br>
+
+        <label>Content:</label><br>
+        <textarea name="content" cols="80" rows="10">{{ post.body }}</textarea><br><br>
+
+        <button type="submit">Update Post</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Login - My Blog{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+{% if user %}
+    <p>Welcome, {{ user.username }}!</p>
+{% endif %}
+
+{% if error %}
+    <p style="color:red">{{ error }}</p>
+{% endif %}
+
+<form method="POST" action="{{ url_for('login') }}">
+    <!-- CSRF Token -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+
+    <div>
+        <button type="submit">Login</button>
+    </div>
+</form>
+{% endblock %}

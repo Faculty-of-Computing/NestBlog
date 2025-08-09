@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Blog{% endblock %}</title>
+    <!-- Charter (serif body font like Medium) -->
+     <link rel="icon" href="https://png.pngtree.com/template/20190521/ourmid/pngtree-blogger-icon-psd-and-png-files-image_179967.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Charter&display=swap" rel="stylesheet">
+<!-- Helvetica Neue fallback -->
+<link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+<header style="background: #f8f8f8; padding: 0.5rem 1rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+        <h1 style="margin: 0;">NestBlog</h1>
+
+        <!-- Mobile menu toggle -->
+        <input type="checkbox" id="menu-toggle" style="display:none;">
+        <label for="menu-toggle" 
+               style="display:none; cursor:pointer; font-size:1.5rem;" 
+               id="menu-icon">&#9776;</label>
+
+        <nav id="nav-links" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <a href="{{ url_for('index') }}" style="text-decoration: none; color: #333;">Home</a>
+            <a href="{{ url_for('add_category') }}" style="text-decoration: none; color: #333;">Add category</a>
+
+            {% if user %}
+                <span>Welcome, {{ user.username }}!</span>
+                <a href="{{ url_for('logout') }}" style="text-decoration: none; color: #333;">Logout</a>
+                <a href="{{ url_for('createpost') }}" style="text-decoration: none; color: #333;">Create Post</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" style="text-decoration: none; color: #333;">Login</a>
+                <a href="{{ url_for('signup') }}" style="text-decoration: none; color: #333;">Sign Up</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+<script>
+function handleMenuDisplay() {
+    const menuIcon = document.getElementById('menu-icon');
+    const navLinks = document.getElementById('nav-links');
+    if (window.innerWidth <= 600) {
+        menuIcon.style.display = 'block';
+        navLinks.style.display = 'none';
+        document.getElementById('menu-toggle').addEventListener('change', function() {
+            navLinks.style.display = this.checked ? 'flex' : 'none';
+            navLinks.style.flexDirection = 'column';
+            navLinks.style.gap = '0.5rem';
+            navLinks.style.marginTop = '0.5rem';
+        });
+    } else {
+        menuIcon.style.display = 'none';
+        navLinks.style.display = 'flex';
+        navLinks.style.flexDirection = 'row';
+        navLinks.style.gap = '1rem';
+    }
+}
+window.addEventListener('resize', handleMenuDisplay);
+window.addEventListener('load', handleMenuDisplay);
+</script>
+
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Group2 UUYCSC22 Project</p>
+    </footer>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

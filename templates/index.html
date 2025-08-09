@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if category_name %}
+        Posts in {{ category_name }} - My Blog
+    {% else %}
+        Home - My Blog
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h1>
+        {% if category_name %}
+            Posts in "{{ category_name }}"
+        {% else %}
+            Welcome {{ user['username'] if user else 'Guest' }}!
+        {% endif %}
+    </h1>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+    <form method="get" class="mb-4">
+        <input type="text" name="search" placeholder="Search posts..." value="{{ search }}">
+        <select name="category_id">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}" {% if category.id|string == category_id %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit">Search</button>
+    </form>
+
+    {% for post in posts %}
+        <div class="post mb-5">
+            {% if post.featured_image %}
+                <img src="{{ url_for('static', filename='images/' + post.featured_image) }}" 
+                     alt="Featured Image" width="300" height="200">
+            {% endif %}
+            <h2>{{ post.title }}</h2>
+            <p>
+                Posted by <strong>{{ post.username }}</strong> 
+                on {{ post.timestamp.strftime('%B %d, %Y at %I:%M %p') }} 
+                | Category: 
+                {% if post.category_name %}
+                    <a href="{{ url_for('category_view', category_id=post.category_id) }}">
+                        {{ post.category_name }}
+                    </a>
+                {% else %}
+                    Uncategorized
+                {% endif %}
+                | 💬 {{ post.comment_count }} comments
+            </p>
+            <a href="{{ url_for('view_post', post_id=post.id) }}">Read More</a>
+        </div>
+    {% else %}
+        <p>No posts found.</p>
+    {% endfor %}
+{% endblock %}

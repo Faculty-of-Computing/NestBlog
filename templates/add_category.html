@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Add Category{% endblock %}
+
+{% block content %}
+    <h2>Add New Category</h2>
+
+    <form method="POST" action="{{ url_for('add_category') }}">
+        <!-- CSRF Token -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <div>
+            <label for="name">Category Name:</label><br>
+            <input type="text" id="name" name="name" placeholder="e.g., Technology" required>
+        </div>
+
+        <br>
+
+        <button type="submit">Add Category</button>
+    </form>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% elif message %}
+        <p style="color: green;">{{ message }}</p>
+    {% endif %}
+{% endblock %}

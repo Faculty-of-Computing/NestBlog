@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Create Post{% endblock %}
+
+{% block content %}
+    <h1>Write Something Below</h1>
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <label>Title:</label><br>
+        <input type="text" name="title" required><br><br>
+
+        <label>Featured Image:</label><br>
+        <input type="file" name="featured_image" accept="image/*"><br><br>
+
+        <label>Category:</label><br>
+        <select name="category_id">
+            <option value="">-- Select Category --</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Mark as Draft:</label>
+        <input type="checkbox" name="draft"><br><br>
+
+        <label>Content:</label><br>
+        <textarea name="content" cols="80" rows="10" placeholder="Write your post here..."></textarea><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

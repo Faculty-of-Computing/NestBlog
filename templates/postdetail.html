@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<article>
+    <h1>{{ post.title }}</h1>
+
+    {# Format datetime using strftime if it's a Python datetime object #}
+    <p><strong>Posted on:</strong> {{ post.timestamp.strftime('%B %d, %Y at %I:%M %p') }}</p>
+
+    {% if post.reading_time %}
+        <p><strong>Reading time:</strong> {{ post.reading_time }} min</p>
+    {% endif %}
+
+    {% if post.featured_image %}
+        <img src="{{ url_for('static', filename='images/' + post.featured_image) }}" alt="Featured Image" width="600" height="400">
+    {% endif %}
+
+    <div style="white-space: pre-wrap;">
+        {{ post.body }}
+    </div>
+
+    {# Show edit link only to the author of the post #}
+    {% if session['user_id'] == post.user_id %}
+        <p>
+            <a href="{{ url_for('editpost', post_id=post.id) }}" style="color:green">✏️ Edit Post</a>
+        </p>
+
+        <p>
+            <form method="POST" action="{{ url_for('delete_post', post_id=post.id) }}" style="display:inline;" onsubmit="return confirm('Delete this post?');">
+                <button type="submit">Delete</button>
+            </form>
+
+        </p>
+    {% endif %}
+
+    <hr>
+
+    <section id="comments">
+        <h3>Comments ({{ comments|length }})</h3>
+
+        <form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}">
+            <textarea name="text" rows="3" required placeholder="Add your comment..."></textarea><br>
+            <button type="submit">Post Comment</button>
+        </form>
+
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    <p><strong>{{ comment.username }}</strong> ({{ comment.timestamp.strftime('%B %d, %Y at %I:%M %p') }}):</p>
+                    <p>{{ comment.text }}</p>
+                </li>
+            {% else %}
+                <li>No comments yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+</article>
+{% endblock %}
