@@ -142,8 +142,10 @@ def editpost(post_id):
         if 'featured_image' in request.files:
             image = request.files['featured_image']
             if image and image.filename:
-                image_path = os.path.join('static/images', image.filename)
-                image.save(image_path)
+                image_dir = os.path.join(app.root_path, 'static', 'images')
+                os.makedirs(image_dir, exist_ok=True)
+                image_path = os.path.join(image_dir, image.filename)
+                image.save(image_path)  # werkzeug.FileStorage.save()
                 featured_image = image.filename
 
         with db.cursor() as cur:
@@ -279,8 +281,10 @@ def createpost():
         if 'featured_image' in request.files:
             image = request.files['featured_image']
             if image and image.filename:
-                image_path = os.path.join('static/images', image.filename)
-                image.save(image_path)
+                image_dir = os.path.join(app.root_path, 'static', 'images')
+                os.makedirs(image_dir, exist_ok=True)
+                image_path = os.path.join(image_dir, image.filename)
+                image.save(image_path)  # werkzeug.FileStorage.save()
                 featured_image = image.filename
 
         with db.cursor() as cur:
