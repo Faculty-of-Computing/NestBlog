@@ -190,7 +190,6 @@ def signup():
 
     return render_template('signup.html')
 
-# Fix add_category function
 @app.route('/add-category', methods=['GET', 'POST'])
 @login_required
 def add_category():
@@ -240,7 +239,6 @@ def view_post(post_id):
 
     return render_template('postdetail.html', post=post, comments=comments)
 
-# Fix add_comment function
 @app.route('/post/<int:post_id>/comment', methods=['POST'])
 def add_comment(post_id):
     if not g.user:
@@ -260,7 +258,7 @@ def add_comment(post_id):
 
     return redirect(url_for('view_post', post_id=post_id))
 
-# Fix createpost function
+
 @app.route('/createpost', methods=['GET', 'POST'])
 @login_required
 def createpost():
@@ -299,7 +297,6 @@ def createpost():
         categories = cur.fetchall()
     return render_template('createpost.html', categories=categories)
 
-# Fix index function
 @app.route('/')
 def index():
     db = get_db()
@@ -387,7 +384,6 @@ def category_view(category_id):
     )
 
 
-# Fix login function
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     db = get_db()
@@ -421,9 +417,9 @@ def logout():
     return redirect(url_for('index'))
 
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 
-#     with app.app_context():
-#         init_db()
+    with app.app_context():
+        init_db()
     
-#     app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
