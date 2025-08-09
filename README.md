@@ -2,7 +2,7 @@
 
 ![School Project](https://img.shields.io/badge/School%20Project-✔️-blue)
 
-🎓 **School Project** – Event Management System built with **Flask (Python)** and **Postgres**, featuring a **frontend built with HTML, CSS, and JavaScript** served via Flask templates.  
+🎓 **School Project** – Blogging Service built with **Flask (Python)** and **Postgres**, featuring a **frontend built with HTML, CSS, and JavaScript** served via Flask templates.  
 📖 **Course:** UUY-CSC222
 🏫 **Department:** Computer Science
 👥 **Group:** 2
