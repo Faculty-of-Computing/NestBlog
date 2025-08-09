@@ -15,8 +15,6 @@ from psycopg2.extras import RealDictCursor
 from datetime import datetime
 app = Flask(__name__)
 load_dotenv()  
-image_dir = os.path.join('static', 'images')
-os.makedirs(image_dir, exist_ok=True)
 
 app.secret_key = os.getenv("SECRET_KEY")
 
