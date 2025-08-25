@@ -49,6 +49,17 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+To set it up and run on local, get a free PostgreSQL server online. From Supabase for example, or you can just setup PostgreSQL on your PC at once 
+
+```
+DB_NAME=databasename
+DB_USER=yourusername
+DB_PASSWORD=12345678
+DB_HOST=localhost
+DB_PORT=5432
+SECRET_KEY=your_secret_key
+```
+
 ### 4. Run the Flask application
 
 ```bash
@@ -62,13 +73,3 @@ http://localhost:5000
 ```
 
 ---
-
-
-
-
-DB_NAME=nestblog
-DB_USER=ifiokambrose
-DB_PASSWORD=12345678
-DB_HOST=localhost
-DB_PORT=5432
-SECRET_KEY=your_secret_key
