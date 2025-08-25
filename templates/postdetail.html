@@ -14,7 +14,7 @@
     {% endif %}
 
     {% if post.featured_image %}
-        <img src="{{ url_for('static', filename='images/' + post.featured_image) }}" alt="Featured Image" width="600" height="400">
+        <img src="data:image/jpeg;base64,{{ post.featured_image }}" alt="{{ post.title }}" width="600" height="400">
     {% endif %}
 
     <div style="white-space: pre-wrap;">

@@ -12,7 +12,7 @@
 
         <label>Current Image:</label><br>
         {% if post.featured_image %}
-            <img src="{{ url_for('static', filename='images/' ~ post.featured_image) }}" width="200"><br>
+        <img src="data:image/jpeg;base64,{{ post.featured_image }}" alt="{{ post.title }}" width="200"><br>
         {% else %}
             <em>No image uploaded</em><br>
         {% endif %}

@@ -3,8 +3,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    bio TEXT DEFAULT '',
-    avatar TEXT DEFAULT 'default.png'
+    bio TEXT DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS category (
@@ -16,11 +15,9 @@ CREATE TABLE IF NOT EXISTS post (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
-    featured_image TEXT,
+    featured_image BYTEA,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     draft BOOLEAN DEFAULT FALSE,
-    reading_time INTEGER,
-    views INTEGER DEFAULT 0,
     user_id INTEGER NOT NULL,
     category_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES "user"(id),

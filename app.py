@@ -4,6 +4,7 @@ from functools import wraps
 from flask import g
 import os
 import re
+import base64
 from dotenv import load_dotenv
 
 import secrets
@@ -18,7 +19,6 @@ load_dotenv()
 
 app.secret_key = os.getenv("SECRET_KEY")
 
-# config.py or app.py
 app.config['DB_NAME'] = os.getenv("DB_NAME")
 app.config['DB_USER'] = os.getenv("DB_USER")
 app.config['DB_PASSWORD'] = os.getenv("DB_PASSWORD")
@@ -118,6 +118,8 @@ def delete_post(post_id):
     flash("Post deleted successfully.", "success")
     return redirect(url_for('index'))
 
+import base64
+
 @app.route('/editpost/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def editpost(post_id):
@@ -136,17 +138,15 @@ def editpost(post_id):
         title = request.form['title']
         content = request.form['content']
         draft = bool(request.form.get('draft'))
-        category_id = request.form.get('category_id')
+        category_id = request.form.get('category_id') or None
 
+        # Keep existing featured_image if no new file uploaded
         featured_image = post['featured_image']
+
         if 'featured_image' in request.files:
             image = request.files['featured_image']
             if image and image.filename:
-                image_dir = os.path.join(app.root_path, 'static', 'images')
-                os.makedirs(image_dir, exist_ok=True)
-                image_path = os.path.join(image_dir, image.filename)
-                image.save(image_path)  # werkzeug.FileStorage.save()
-                featured_image = image.filename
+                featured_image = psycopg2.Binary(image.read())  # store as BLOB
 
         with db.cursor() as cur:
             cur.execute("""
@@ -158,10 +158,17 @@ def editpost(post_id):
 
         return redirect(url_for('index'))
 
+    # fetch categories
     with db.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("SELECT * FROM category")
         categories = cur.fetchall()
+
+    # 🔑 convert image to base64 so template can display it
+    if post['featured_image']:
+        post['featured_image'] = base64.b64encode(post['featured_image']).decode('utf-8')
+
     return render_template('editpost.html', post=post, categories=categories)
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -216,6 +223,8 @@ def add_category():
 @app.route('/post/<int:post_id>', methods=['GET'])
 def view_post(post_id):
     db = get_db()
+
+    # Fetch Post
     with db.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("""
             SELECT post.*, "user".username, category.name as category_name
@@ -225,10 +234,15 @@ def view_post(post_id):
             WHERE post.id = %s
         """, (post_id,))
         post = cur.fetchone()
-    
+
     if not post:
         return "Post not found", 404
 
+    # Convert image bytes → base64
+    if post['featured_image']:
+        post['featured_image'] = base64.b64encode(post['featured_image']).decode('utf-8')
+
+    # Fetch Comments
     with db.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("""
             SELECT comment.*, "user".username 
@@ -281,11 +295,8 @@ def createpost():
         if 'featured_image' in request.files:
             image = request.files['featured_image']
             if image and image.filename:
-                image_dir = os.path.join(app.root_path, 'static', 'images')
-                os.makedirs(image_dir, exist_ok=True)
-                image_path = os.path.join(image_dir, image.filename)
-                image.save(image_path)  # werkzeug.FileStorage.save()
-                featured_image = image.filename
+                # read raw binary data
+                featured_image = image.read()
 
         with db.cursor() as cur:
             cur.execute("""
@@ -301,6 +312,9 @@ def createpost():
         categories = cur.fetchall()
     return render_template('createpost.html', categories=categories)
 
+
+
+
 @app.route('/')
 def index():
     db = get_db()
@@ -313,7 +327,7 @@ def index():
         post.title, 
         post.timestamp, 
         post.featured_image,
-        post.category_id, -- ✅ Needed for category links
+        post.category_id,
         "user".username,
         category.name AS category_name,
         (SELECT COUNT(*) FROM comment WHERE comment.post_id = post.id) AS comment_count
@@ -321,8 +335,7 @@ def index():
     JOIN "user" ON post.user_id = "user".id
     LEFT JOIN category ON post.category_id = category.id
     WHERE post.draft = false
-"""
-
+    """
     params = []
 
     if search:
@@ -335,9 +348,14 @@ def index():
 
     query += " ORDER BY post.timestamp DESC"
 
-    with db.cursor() as cur:
+    with db.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(query, params)
         posts = cur.fetchall()
+
+        # ✅ Convert blob to base64 string for templates
+        for post in posts:
+            if post["featured_image"]:
+                post["featured_image"] = base64.b64encode(post["featured_image"]).decode("utf-8")
 
         cur.execute("SELECT id, name FROM category ORDER BY name ASC")
         categories = cur.fetchall()
@@ -360,7 +378,7 @@ def category_view(category_id):
             post.title, 
             post.timestamp, 
             post.featured_image,
-            post.category_id,  -- ✅ include this
+            post.category_id,
             "user".username,
             category.name AS category_name,
             (SELECT COUNT(*) FROM comment WHERE comment.post_id = post.id) AS comment_count
@@ -375,6 +393,11 @@ def category_view(category_id):
     with db.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(query, (category_id,))
         posts = cur.fetchall()
+
+        # 🔹 Encode BLOBs to Base64
+        for post in posts:
+            if post['featured_image']:
+                post['featured_image'] = base64.b64encode(post['featured_image']).decode('utf-8')
 
         cur.execute("SELECT id, name FROM category")
         categories = cur.fetchall()

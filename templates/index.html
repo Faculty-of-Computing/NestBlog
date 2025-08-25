@@ -40,8 +40,9 @@
     {% for post in posts %}
         <div class="post mb-5">
             {% if post.featured_image %}
-                <img src="{{ url_for('static', filename='images/' + post.featured_image) }}" 
-                     alt="Featured Image" width="300" height="200">
+            
+            <img src="data:image/jpeg;base64,{{ post.featured_image }}" alt="Featured Image" width="300" height="200">
+
             {% endif %}
             <h2>{{ post.title }}</h2>
             <p>
