@@ -64,3 +64,11 @@ http://localhost:5000
 ---
 
 
+
+
+DB_NAME=nestblog
+DB_USER=ifiokambrose
+DB_PASSWORD=12345678
+DB_HOST=localhost
+DB_PORT=5432
+SECRET_KEY=your_secret_key
