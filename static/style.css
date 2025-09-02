@@ -273,10 +273,10 @@ button,
     letter-spacing: 0.025em;
 }
 
-/*Delete Button*/
+/* Post Actions - Updated styling */
 .post-actions {
     display: flex;
-    justify-content: space-between;
+    gap: var(--spacing-sm);
     align-items: center;
     margin-top: var(--spacing-lg);
     padding-top: var(--spacing-md);
@@ -286,12 +286,29 @@ button,
 .delete-form-inline {
     display: inline;
     margin: 0;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
 }
 
+/* Smaller action buttons */
 .post-actions .btn {
-    margin: 0;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    min-width: auto;
 }
 
+/* Edit button - green color */
+.btn-edit {
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: white;
+}
+
+.btn-edit:hover {
+    background: linear-gradient(135deg, var(--dark-green), var(--primary-green));
+}
 
 button:hover,
 .btn:hover {
@@ -314,7 +331,7 @@ button:active,
     background: linear-gradient(135deg, var(--accent-blue), var(--secondary-blue));
 }
 
-/* Danger button variant */
+/* Danger button variant - smaller for post actions */
 .btn-danger {
     background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
@@ -568,6 +585,15 @@ footer p {
         align-items: flex-start;
         gap: var(--spacing-xs);
     }
+
+    .post-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .post-actions .btn {
+        width: 100%;
+    }
 }
 
 @media (max-width: 480px) {
@@ -588,16 +614,4 @@ footer p {
         width: 100%;
         margin-bottom: var(--spacing-xs);
     }
-
-    @media (max-width: 768px) {
-    .post-actions {
-        flex-direction: column;
-        gap: var(--spacing-sm);
-    }
-    
-    .post-actions .btn {
-        width: 100%;
-    }
-}
-
 }

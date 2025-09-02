@@ -21,21 +21,14 @@
         {{ post.body }}
     </div>
 
-    {# Show edit link only to the author of the post #}
+    {# Show action buttons only to the author of the post #}
     {% if session['user_id'] == post.user_id %}
-        <p>
-            <a href="{{ url_for('editpost', post_id=post.id) }}" style="color:green">✏️ Edit Post</a>
-        </p>
-
-        <p>
-    <div class="post-actions">
-        <a href="{{ url_for('editpost', post_id=post.id) }}" class="btn btn-secondary">✏️ Edit Post</a>
-        <form method="POST" action="{{ url_for('delete_post', post_id=post.id) }}" class="delete-form-inline" onsubmit="return confirm('Delete this post?');">
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
-    </div>
-
-        </p>
+        <div class="post-actions">
+            <a href="{{ url_for('editpost', post_id=post.id) }}" class="btn btn-edit">✏️ Edit Post</a>
+            <form method="POST" action="{{ url_for('delete_post', post_id=post.id) }}" class="delete-form-inline" onsubmit="return confirm('Delete this post?');">
+                <button type="submit" class="btn btn-danger">🗑️ Delete</button>
+            </form>
+        </div>
     {% endif %}
 
     <hr>
@@ -44,9 +37,9 @@
         <h3>Comments ({{ comments|length }})</h3>
 
         <form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}" class="card">
-    <textarea name="text" rows="3" required placeholder="Add your comment..."></textarea><br>
-    <button type="submit">Post Comment</button>
-</form>
+            <textarea name="text" rows="3" required placeholder="Add your comment..."></textarea><br>
+            <button type="submit">Post Comment</button>
+        </form>
 
         <ul>
             {% for comment in comments %}
