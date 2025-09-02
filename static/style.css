@@ -273,6 +273,26 @@ button,
     letter-spacing: 0.025em;
 }
 
+/*Delete Button*/
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-light);
+}
+
+.delete-form-inline {
+    display: inline;
+    margin: 0;
+}
+
+.post-actions .btn {
+    margin: 0;
+}
+
+
 button:hover,
 .btn:hover {
     transform: translateY(-2px);
@@ -568,4 +588,16 @@ footer p {
         width: 100%;
         margin-bottom: var(--spacing-xs);
     }
+
+    @media (max-width: 768px) {
+    .post-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .post-actions .btn {
+        width: 100%;
+    }
+}
+
 }
