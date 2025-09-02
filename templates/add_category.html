@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Add New Category</h2>
 
-    <form method="POST" action="{{ url_for('add_category') }}">
+    <form method="POST" action="{{ url_for('add_category') }}" class="card">
         <!-- CSRF Token -->
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 

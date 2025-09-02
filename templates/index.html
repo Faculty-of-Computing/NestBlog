@@ -24,18 +24,18 @@
     {% endif %}
 {% endwith %}
 
-    <form method="get" class="mb-4">
-        <input type="text" name="search" placeholder="Search posts..." value="{{ search }}">
-        <select name="category_id">
-            <option value="">All Categories</option>
-            {% for category in categories %}
-                <option value="{{ category.id }}" {% if category.id|string == category_id %}selected{% endif %}>
-                    {{ category.name }}
-                </option>
-            {% endfor %}
-        </select>
-        <button type="submit">Search</button>
-    </form>
+    <form method="get" class="search-form">
+    <input type="text" name="search" placeholder="Search posts..." value="{{ search }}">
+    <select name="category_id">
+        <option value="">All Categories</option>
+        {% for category in categories %}
+            <option value="{{ category.id }}" {% if category.id|string == category_id %}selected{% endif %}>
+                {{ category.name }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+</form>
 
     {% for post in posts %}
         <div class="post mb-5">
