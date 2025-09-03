@@ -5,6 +5,7 @@ from flask import g
 import os
 import re
 import base64
+from psycopg2.errors import UniqueViolation
 from dotenv import load_dotenv
 
 import secrets
@@ -42,6 +43,8 @@ def inject_csrf_token():
 def inject_user():
     db = get_db()
     user = None
+    has_drafts = False
+
     if 'user_id' in session:
         with db.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(
@@ -49,7 +52,17 @@ def inject_user():
                 (session['user_id'],)
             )
             user = cur.fetchone()
-    return dict(user=user)
+
+            if user:
+                # ✅ Use draft = TRUE instead of status = 'draft'
+                cur.execute(
+                    'SELECT 1 FROM post WHERE user_id = %s AND draft = TRUE LIMIT 1',
+                    (user['id'],)
+                )
+                has_drafts = cur.fetchone() is not None
+
+    return dict(user=user, has_drafts=has_drafts)
+
 
 def login_required(f):
     @wraps(f)
@@ -209,11 +222,13 @@ def add_category():
 
         name = request.form['name'].strip()
         db = get_db()
+
         try:
             with db.cursor() as cur:
                 cur.execute('INSERT INTO category (name) VALUES (%s)', (name,))
             db.commit()
-        except IntegrityError:
+        except UniqueViolation:
+            db.rollback()  
             return render_template("add_category.html", error="Category already exists")
 
         return redirect(url_for('createpost'))
@@ -352,7 +367,7 @@ def index():
         cur.execute(query, params)
         posts = cur.fetchall()
 
-        # ✅ Convert blob to base64 string for templates
+    
         for post in posts:
             if post["featured_image"]:
                 post["featured_image"] = base64.b64encode(post["featured_image"]).decode("utf-8")
@@ -437,6 +452,23 @@ def login():
         return render_template('login.html', error='Invalid credentials')
 
     return render_template('login.html')
+
+@app.route('/drafts')
+def view_drafts():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    db = get_db()
+    with db.cursor(cursor_factory=RealDictCursor) as cur:
+        # Since draft is a BOOLEAN, check for TRUE instead of 'draft'
+        cur.execute(
+            'SELECT * FROM post WHERE user_id = %s AND draft = TRUE ORDER BY timestamp DESC',
+            (session['user_id'],)
+        )
+        drafts = cur.fetchall()
+
+    return render_template('drafts.html', drafts=drafts)
+
 
 @app.route('/logout')
 def logout():

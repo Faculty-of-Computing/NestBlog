@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Your Drafts</h2>
+
+{% if drafts %}
+    <ul>
+        {% for draft in drafts %}
+            <li>
+                <strong>{{ draft.title }}</strong>
+                <br>
+                <a href="{{ url_for('editpost', post_id=draft.id) }}">Edit</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no drafts.</p>
+{% endif %}
+{% endblock %}
